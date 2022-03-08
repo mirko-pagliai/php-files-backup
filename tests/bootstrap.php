@@ -78,3 +78,5 @@ Cache::setConfig([
 ]);
 
 $_SERVER['PHP_SELF'] = '/';
+
+Configure::write('Error.ignoredDeprecationPaths', ['*/cakephp/src/TestSuite/Fixture/FixtureInjector.php']);
