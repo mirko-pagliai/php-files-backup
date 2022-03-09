@@ -56,7 +56,7 @@ class FilesBackup
         $appName = basename($this->source);
         $ZipArchive->addEmptyDir($appName);
 
-        foreach ($this->getAllFiles($this->source) as $filename) {
+        foreach ($this->getAllFiles() as $filename) {
             $ZipArchive->addFile($filename, $appName . DS . basename($filename));
         }
 
