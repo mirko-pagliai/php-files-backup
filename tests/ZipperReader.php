@@ -32,7 +32,7 @@ class ZipperReader
     /**
      * Constructor
      * @param string $zipFile Zip archive you want to read
-     * @throws ErrorException
+     * @throws \ErrorException
      */
     public function __construct(string $zipFile)
     {
