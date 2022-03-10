@@ -16,6 +16,7 @@ namespace FilesBackup;
 
 use ErrorException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use ZipArchive;
 
 /**
@@ -32,12 +33,39 @@ class FilesBackup
     protected $source;
 
     /**
-     * Construct
-     * @param string $source Source directory you want to backup
+     * Options
+     * @var array<string, mixed>
      */
-    public function __construct(string $source)
+    protected $options;
+
+    /**
+     * Constructor.
+     *
+     * Options:
+     *  - `git_ignore`: with `true`, it automatically ignores the files and
+     *      directories specified in the `.gitignore` file (default `true`).
+     * @param string $source Source directory you want to backup
+     * @param array $options Options
+     */
+    public function __construct(string $source, array $options = [])
     {
         $this->source = $source;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+        $this->options = $resolver->resolve($options);
+    }
+
+    /**
+     * Option configurations
+     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver OptionsResolver
+     * @return void
+     */
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->define('git_ignore')
+            ->allowedTypes('bool')
+            ->default(true);
     }
 
     /**
@@ -74,7 +102,10 @@ class FilesBackup
     {
         $finder = new Finder();
         $finder->files()->in($this->source);
-        $finder->ignoreVCSIgnored(true);
+
+        if ($this->options['git_ignore']) {
+            $finder->ignoreVCSIgnored(true);
+        }
 
         foreach ($finder as $file) {
             $files[] = $file->getRealPath();

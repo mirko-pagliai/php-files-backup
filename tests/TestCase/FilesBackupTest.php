@@ -54,5 +54,9 @@ class FilesBackupTest extends TestCase
         $this->assertContains(APP . 'empty', $files);
         $this->assertContains(APP . '400x400.jpeg', $files);
         $this->assertNotContains(APP . 'vendor/vendor.php', $files);
+
+        $FileExplorer = new FilesBackup(APP, ['git_ignore' => false]);
+        $files = $FileExplorer->getAllFiles();
+        $this->assertContains(APP . 'vendor/vendor.php', $files);
     }
 }
