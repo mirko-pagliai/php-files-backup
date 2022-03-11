@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="cakephp-files-backup">
+<ruleset name="php-files-backup">
     <arg value="p"/>
     <file>.</file>
 

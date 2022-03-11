@@ -7,7 +7,7 @@
 >
 
     <testsuites>
-        <testsuite name="cakephp-files-backup Test Cases">
+        <testsuite name="php-files-backup Test Cases">
             <directory>./tests/TestCase</directory>
         </testsuite>
     </testsuites>

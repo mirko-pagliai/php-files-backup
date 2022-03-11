@@ -1,8 +1,8 @@
 {
-    "name": "mirko-pagliai/cakephp-files-backup",
-    "description": "Files Backup plugin for CakePHP",
-    "homepage": "https://github.com/mirko-pagliai/cakephp-files-backup",
-    "type": "cakephp-plugin",
+    "name": "mirko-pagliai/php-files-backup",
+    "description": "Files Backup tool",
+    "homepage": "https://github.com/mirko-pagliai/php-files-backup",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
