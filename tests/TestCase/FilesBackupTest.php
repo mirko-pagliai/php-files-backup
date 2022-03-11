@@ -14,9 +14,9 @@ declare(strict_types=1);
  */
 namespace FilesBackup\Test\TestCase;
 
-use Cake\TestSuite\TestCase;
 use FilesBackup\FilesBackup;
 use FilesBackup\Test\ZipperReader;
+use Tools\TestSuite\TestCase;
 
 /**
  * FilesBackupTest class
