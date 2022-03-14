@@ -18,7 +18,7 @@ date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
 
 define('DS', DIRECTORY_SEPARATOR);
-define('ROOT', dirname(__DIR__) . DS);;
+define('ROOT', dirname(__DIR__) . DS);
 define('TESTS', ROOT . 'tests' . DS);
 define('TEST_APP', TESTS . 'test_app' . DS);
 define('APP', TEST_APP . 'TestApp' . DS);
