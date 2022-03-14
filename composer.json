@@ -23,7 +23,10 @@
     "autoload": {
         "psr-4": {
             "FilesBackup\\": "src"
-        }
+        },
+        "files": [
+            "config/bootstrap.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
