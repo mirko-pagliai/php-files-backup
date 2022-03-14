@@ -24,6 +24,17 @@ use Tools\TestSuite\TestCase;
 class FilesBackupTest extends TestCase
 {
     /**
+     * Test for `__construct()` method, with a no directory source
+     * @test
+     */
+    public function testConstructorNoDirectorySource(): void
+    {
+        $file = tempnam(TMP, 'tmp');
+        $this->expectExceptionMessage('`' . $file . '` is not a directory');
+        new FilesBackup($file);
+    }
+
+    /**
      * Test for `create()` method
      * @test
      */
@@ -39,7 +50,8 @@ class FilesBackupTest extends TestCase
         $this->assertContains('TestApp' . DS . 'empty', $files);
         $this->assertContains('TestApp' . DS . '400x400.jpeg', $files);
 
-        unlink($target);
+        $this->expectExceptionMessageMatches('/^File `[\/\w\-\.]+` already exists$/');
+        $FileExplorer->create($target);
     }
 
     /**

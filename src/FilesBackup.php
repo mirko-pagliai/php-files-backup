@@ -17,6 +17,7 @@ namespace FilesBackup;
 use ErrorException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tools\Exceptionist;
 use ZipArchive;
 
 /**
@@ -46,9 +47,13 @@ class FilesBackup
      *      directories specified in the `.gitignore` file (default `true`).
      * @param string $source Source directory you want to backup
      * @param array $options Options
+     * @throws \Tools\Exception\FileNotExistsException
+     * @throws \Tools\Exception\NotReadableException
      */
     public function __construct(string $source, array $options = [])
     {
+        Exceptionist::isReadable($source);
+        Exceptionist::isDir($source, '`' . $source . '` is not a directory');
         $this->source = $source;
 
         $resolver = new OptionsResolver();
@@ -73,9 +78,14 @@ class FilesBackup
      * @param string $target Zip backup you want to create
      * @return string
      * @throws \ErrorException
+     * @throws \Tools\Exception\FileNotExistsException
+     * @throws \Tools\Exception\NotWritableException
      */
     public function create(string $target): string
     {
+        Exceptionist::fileNotExists($target, 'File `' . $target . '` already exists');
+        Exceptionist::isWritable(dirname($target));
+
         $ZipArchive = new ZipArchive();
         if ($ZipArchive->open($target, ZipArchive::CREATE) !== true) {
             throw new ErrorException(sprintf('Unable to create `%s`', $target));
