@@ -28,4 +28,5 @@ define('CONFIG', APP . 'config' . DS);
 
 @mkdir(TMP, 0777, true);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require ROOT . 'vendor/autoload.php';
+require ROOT . 'config/bootstrap.php';
