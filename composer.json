@@ -13,6 +13,7 @@
     "require": {
         "php": ">=7.2",
         "mirko-pagliai/php-tools": "dev-develop as 1.5.10",
+        "symfony/console": "^5.4|^6.0",
         "symfony/finder": "^5.0|^6.0",
         "symfony/options-resolver": "^5.1|^6.0"
     },
