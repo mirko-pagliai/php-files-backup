@@ -71,7 +71,7 @@ class FilesBackupCommand extends Command
 
             $output->writeln('<info>Backup exported successfully to `' . $target . '`</info>');
         } catch (\Exception $e) {
-            $output->writeln('<error>Error: ' . strtolower($e->getMessage()) . '</error>');
+            $output->writeln('<error>Error: ' . lcfirst($e->getMessage()) . '</error>');
 
             return Command::FAILURE;
         }
