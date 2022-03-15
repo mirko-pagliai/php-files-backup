@@ -29,7 +29,7 @@ class FilesBackupTest extends TestCase
      */
     public function testConstructorNoDirectorySource(): void
     {
-        $file = tempnam(TMP, 'tmp');
+        $file = tempnam(TMP, 'tmp') ?: '';
         $this->expectExceptionMessage('`' . $file . '` is not a directory');
         new FilesBackup($file);
     }
