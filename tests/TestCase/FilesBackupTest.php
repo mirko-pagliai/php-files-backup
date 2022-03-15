@@ -50,7 +50,7 @@ class FilesBackupTest extends TestCase
         $this->assertContains('TestApp' . DS . 'empty', $files);
         $this->assertContains('TestApp' . DS . '400x400.jpeg', $files);
 
-        $this->expectExceptionMessageMatches('/^File `[\/\w\-\.]+` already exists$/');
+        $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
         $FileExplorer->create($target);
     }
 
