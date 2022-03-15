@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace FilesBackup\Test\TestCase\Command;
 
 use FilesBackup\Command\FilesBackupCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tools\TestSuite\TestCase;
 
@@ -40,5 +41,22 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Source: ' . APP, $output);
         $this->assertStringContainsString('Target: ' . $target, $output);
         $this->assertStringContainsString('Backup exported successfully to `' . $target . '`', $output);
+    }
+
+    /**
+     * Test for `execute()` method, with failure
+     * @test
+     */
+    public function testExecuteWithFailure(): void
+    {
+        $target = TMP . 'noExisting' . DS . 'file.zip';
+
+        $command = new FilesBackupCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(compact('target'));
+        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Error: file or directory `' . dirname($target) . '` does not exist', $output);
     }
 }
