@@ -46,7 +46,6 @@ class FilesBackupCommandTest extends TestCase
         $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
         $commandTester->assertCommandIsSuccessful();
-
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Source: ' . APP, $output);
         $this->assertStringContainsString('Target: ' . $target, $output);
@@ -54,10 +53,9 @@ class FilesBackupCommandTest extends TestCase
         @unlink($target);
 
         $commandTester->execute(compact('target') + ['--git-ignore' => true]);
-
-        $output = $commandTester->getDisplay();
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file are automatically ignored');
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file are automatically ignored', $output);
     }
 
     /**
