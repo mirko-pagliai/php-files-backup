@@ -16,6 +16,7 @@ namespace FilesBackup\Test\TestCase;
 
 use FilesBackup\FilesBackup;
 use FilesBackup\Test\ZipperReader;
+use Tools\TestSuite\EventAssertTrait;
 use Tools\TestSuite\TestCase;
 
 /**
@@ -23,6 +24,8 @@ use Tools\TestSuite\TestCase;
  */
 class FilesBackupTest extends TestCase
 {
+    use EventAssertTrait;
+
     /**
      * Test for `__construct()` method, with a no directory source
      * @test
@@ -40,15 +43,22 @@ class FilesBackupTest extends TestCase
      */
     public function testCreate(): void
     {
+        $expectedFiles = [
+            'TestApp' . DS . 'example.php',
+            'TestApp' . DS . 'empty',
+            'TestApp' . DS . '400x400.jpeg',
+        ];
+
         $FilesBackup = new FilesBackup(APP);
         $target = $FilesBackup->create(TMP . 'tmp_' . mt_rand() . '.zip');
         $this->assertFileExists($target);
-
         $Zipper = new ZipperReader($target);
         $files = $Zipper->list();
-        $this->assertContains('TestApp' . DS . 'example.php', $files);
-        $this->assertContains('TestApp' . DS . 'empty', $files);
-        $this->assertContains('TestApp' . DS . '400x400.jpeg', $files);
+
+        foreach ($expectedFiles as $expectedFile) {
+            $this->assertEventFiredWithArgs('FilesBackup.fileAdded', [$expectedFile], $FilesBackup->getEventDispatcher());
+            $this->assertContains($expectedFile, $files);
+        }
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
         $FilesBackup->create($target);

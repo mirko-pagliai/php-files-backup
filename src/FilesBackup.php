@@ -15,8 +15,10 @@ declare(strict_types=1);
 namespace FilesBackup;
 
 use ErrorException;
+use FilesBackup\Event\FileAddedEvent;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tools\Event\EventDispatcherTrait;
 use Tools\Exceptionist;
 use ZipArchive;
 
@@ -27,6 +29,8 @@ use ZipArchive;
  */
 class FilesBackup
 {
+    use EventDispatcherTrait;
+
     /**
      * Source directory
      * @var string
@@ -74,7 +78,12 @@ class FilesBackup
     }
 
     /**
-     * Creates a zip backup from the source directory
+     * Creates a zip backup from the source directory.
+     *
+     * ### Events
+     * This method will trigger some events:
+     *  - `FilesBackup.fileAdded`: will be triggered when a file is added to the
+     *      backup.
      * @param string $target Zip backup you want to create
      * @return string
      * @throws \ErrorException
@@ -95,7 +104,9 @@ class FilesBackup
         $ZipArchive->addEmptyDir($appName);
 
         foreach ($this->getAllFiles() as $filename) {
-            $ZipArchive->addFile($filename, $appName . DS . basename($filename));
+            $relFilename = $appName . DS . basename($filename);
+            $ZipArchive->addFile($filename, $relFilename);
+            $this->dispatchEvent('FilesBackup.fileAdded', $relFilename);
         }
 
         $ZipArchive->close();
