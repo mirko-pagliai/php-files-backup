@@ -50,6 +50,8 @@ class FilesBackupCommand extends Command
 
         $defaultSource = defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd());
         $this->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', $defaultSource);
+
+        $this->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
     }
 
     /**
@@ -66,7 +68,12 @@ class FilesBackupCommand extends Command
         $output->writeln('Target: ' . $target);
 
         try {
-            $FilesBackup = new FilesBackup($input->getOption('source'));
+            if ($input->getOption('git-ignore')) {
+                $options['git_ignore'] = true;
+                $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
+            }
+
+            $FilesBackup = new FilesBackup($input->getOption('source'), $options ?? []);
             $FilesBackup->create($target);
 
             $output->writeln('<info>Backup exported successfully to `' . $target . '`</info>');
