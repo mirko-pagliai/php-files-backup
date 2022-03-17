@@ -40,8 +40,8 @@ class FilesBackupTest extends TestCase
      */
     public function testCreate(): void
     {
-        $FileExplorer = new FilesBackup(APP);
-        $target = $FileExplorer->create(TMP . 'tmp_' . mt_rand() . '.zip');
+        $FilesBackup = new FilesBackup(APP);
+        $target = $FilesBackup->create(TMP . 'tmp_' . mt_rand() . '.zip');
         $this->assertFileExists($target);
 
         $Zipper = new ZipperReader($target);
@@ -51,7 +51,7 @@ class FilesBackupTest extends TestCase
         $this->assertContains('TestApp' . DS . '400x400.jpeg', $files);
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
-        $FileExplorer->create($target);
+        $FilesBackup->create($target);
     }
 
     /**
@@ -60,15 +60,15 @@ class FilesBackupTest extends TestCase
      */
     public function testGetAllFiles(): void
     {
-        $FileExplorer = new FilesBackup(APP);
-        $files = $FileExplorer->getAllFiles();
+        $FilesBackup = new FilesBackup(APP);
+        $files = $FilesBackup->getAllFiles();
         $this->assertContains(APP . 'example.php', $files);
         $this->assertContains(APP . 'empty', $files);
         $this->assertContains(APP . '400x400.jpeg', $files);
         $this->assertNotContains(APP . 'vendor' . DS . 'vendor.php', $files);
 
-        $FileExplorer = new FilesBackup(APP, ['git_ignore' => false]);
-        $files = $FileExplorer->getAllFiles();
+        $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
+        $files = $FilesBackup->getAllFiles();
         $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $files);
     }
 }
