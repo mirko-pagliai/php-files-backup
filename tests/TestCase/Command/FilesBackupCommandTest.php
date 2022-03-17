@@ -25,6 +25,17 @@ use Tools\TestSuite\TestCase;
 class FilesBackupCommandTest extends TestCase
 {
     /**
+     * Internal method to get a `CommandTest` instance for the tested command
+     * @return CommandTester
+     */
+    protected function getCommandTester(): CommandTester
+    {
+        $command = new FilesBackupCommand();
+
+        return new CommandTester($command);
+    }
+
+    /**
      * Test for `execute()` method
      * @test
      */
@@ -32,8 +43,7 @@ class FilesBackupCommandTest extends TestCase
     {
         $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
-        $command = new FilesBackupCommand();
-        $commandTester = new CommandTester($command);
+        $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
         $commandTester->assertCommandIsSuccessful();
 
@@ -51,8 +61,7 @@ class FilesBackupCommandTest extends TestCase
     {
         $target = TMP . 'noExisting' . DS . 'file.zip';
 
-        $command = new FilesBackupCommand();
-        $commandTester = new CommandTester($command);
+        $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
 
