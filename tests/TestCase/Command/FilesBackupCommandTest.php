@@ -41,6 +41,12 @@ class FilesBackupCommandTest extends TestCase
      */
     public function testExecute(): void
     {
+        $expectedFiles = [
+            'TestApp' . DS . 'example.php',
+            'TestApp' . DS . 'empty',
+            'TestApp' . DS . '400x400.jpeg',
+        ];
+
         $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
         $commandTester = $this->getCommandTester();
@@ -50,6 +56,10 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Source: ' . APP, $output);
         $this->assertStringContainsString('Target: ' . $target, $output);
         $this->assertStringContainsString('Backup exported successfully to `' . $target . '`', $output);
+        foreach ($expectedFiles as $filename) {
+            $this->assertStringContainsString('Added file `' . $filename . '`', $output);
+        }
+
         @unlink($target);
 
         $commandTester->execute(compact('target') + ['--git-ignore' => true]);

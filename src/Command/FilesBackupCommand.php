@@ -20,12 +20,16 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tools\Event\Event;
+use Tools\Event\EventDispatcherTrait;
 
 /**
  * FilesBackupCommand class
  */
 class FilesBackupCommand extends Command
 {
+    use EventDispatcherTrait;
+
     /**
      * Name of the command
      * @var string
@@ -63,17 +67,23 @@ class FilesBackupCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $target = $input->getArgument('target');
+        $source = $input->getOption('source');
 
-        $output->writeln('Source: ' . $input->getOption('source'));
+        $output->writeln('Source: ' . $source);
         $output->writeln('Target: ' . $target);
 
-        try {
-            if ($input->getOption('git-ignore')) {
-                $options['git_ignore'] = true;
-                $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
-            }
+        if ($input->getOption('git-ignore')) {
+            $options['git_ignore'] = true;
+            $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
+        }
 
-            $FilesBackup = new FilesBackup($input->getOption('source'), $options ?? []);
+        try {
+            $FilesBackup = new FilesBackup($source, $options ?? []);
+
+            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.fileAdded', function (Event $event) use ($output) {
+                $output->writeln('Added file `' . $event->getArg(0) . '`');
+            });
+
             $FilesBackup->create($target);
 
             $output->writeln('<info>Backup exported successfully to `' . $target . '`</info>');
