@@ -69,8 +69,8 @@ class FilesBackupCommand extends Command
         $target = $input->getArgument('target');
         $source = $input->getOption('source');
 
-        $output->writeln('Source: ' . $source);
-        $output->writeln('Target: ' . $target);
+        $output->writeln('Source: `' . $source . '`');
+        $output->writeln('Target: `' . $target . '`');
 
         if ($input->getOption('git-ignore')) {
             $options['git_ignore'] = true;
@@ -81,12 +81,12 @@ class FilesBackupCommand extends Command
             $FilesBackup = new FilesBackup($source, $options ?? []);
 
             $FilesBackup->getEventDispatcher()->addListener('FilesBackup.fileAdded', function (Event $event) use ($output) {
-                $output->writeln('Added file `' . $event->getArg(0) . '`');
+                $output->writeln('Added file: `' . $event->getArg(0) . '`');
             });
 
             $FilesBackup->create($target);
 
-            $output->writeln('<info>Backup exported successfully to `' . $target . '`</info>');
+            $output->writeln('<info>Backup exported successfully to: `' . $target . '`</info>');
         } catch (\Exception $e) {
             $output->writeln('<error>Error: ' . lcfirst($e->getMessage()) . '</error>');
 

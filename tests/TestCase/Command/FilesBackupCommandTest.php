@@ -53,11 +53,11 @@ class FilesBackupCommandTest extends TestCase
         $commandTester->execute(compact('target'));
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Source: ' . APP, $output);
-        $this->assertStringContainsString('Target: ' . $target, $output);
-        $this->assertStringContainsString('Backup exported successfully to `' . $target . '`', $output);
+        $this->assertStringContainsString('Source: `' . APP . '`', $output);
+        $this->assertStringContainsString('Target: `' . $target . '`', $output);
+        $this->assertStringContainsString('Backup exported successfully to: `' . $target . '`', $output);
         foreach ($expectedFiles as $filename) {
-            $this->assertStringContainsString('Added file `' . $filename . '`', $output);
+            $this->assertStringContainsString('Added file: `' . $filename . '`', $output);
         }
 
         @unlink($target);
