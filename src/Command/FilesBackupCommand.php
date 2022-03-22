@@ -66,12 +66,13 @@ class FilesBackupCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        //Gets and writes target and sources
         $target = $input->getArgument('target');
         $source = $input->getOption('source');
-
         $output->writeln('Source: `' . $source . '`');
         $output->writeln('Target: `' . $target . '`');
 
+        //Sets options
         if ($input->getOption('git-ignore')) {
             $options['git_ignore'] = true;
             $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
@@ -80,6 +81,7 @@ class FilesBackupCommand extends Command
         try {
             $FilesBackup = new FilesBackup($source, $options ?? []);
 
+            //Sets event listeners
             $FilesBackup->getEventDispatcher()->addListener('FilesBackup.fileAdded', function (Event $event) use ($output) {
                 $output->writeln('Added file: `' . $event->getArg(0) . '`');
             });
