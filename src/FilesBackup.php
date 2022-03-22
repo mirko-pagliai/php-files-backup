@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace FilesBackup;
 
 use ErrorException;
-use FilesBackup\Event\FileAddedEvent;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tools\Event\EventDispatcherTrait;
