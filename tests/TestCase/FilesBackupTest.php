@@ -27,6 +27,25 @@ class FilesBackupTest extends TestCase
     use EventAssertTrait;
 
     /**
+     * Internal method to get the expected files from a standard (default options)
+     *  backups of `APP` directory
+     * @param bool $relativePath If `true` paths will be relative
+     * @return array
+     */
+    protected function getExpectedFiles(bool $relativePath = false): array
+    {
+        $dir = $relativePath ? array_value_last(array_filter(explode(DS, APP))) . DS : APP;
+
+        return [
+            $dir . 'example.php',
+            $dir . 'empty',
+            $dir . '400x400.jpeg',
+            $dir . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile',
+            $dir . 'subDir' . DS . 'subDirFile',
+        ];
+    }
+
+    /**
      * Test for `__construct()` method, with a no directory source
      * @test
      */
@@ -43,22 +62,19 @@ class FilesBackupTest extends TestCase
      */
     public function testCreate(): void
     {
-        $expectedFiles = [
-            'TestApp' . DS . 'example.php',
-            'TestApp' . DS . 'empty',
-            'TestApp' . DS . '400x400.jpeg',
-        ];
+        $expectedFiles = $this->getExpectedFiles(true);
 
         $FilesBackup = new FilesBackup(APP);
         $target = $FilesBackup->create(TMP . 'tmp_' . mt_rand() . '.zip');
         $this->assertFileExists($target);
-        $Zipper = new ZipperReader($target);
-        $files = $Zipper->list();
 
         foreach ($expectedFiles as $expectedFile) {
             $this->assertEventFiredWithArgs('FilesBackup.fileAdded', [$expectedFile], $FilesBackup->getEventDispatcher());
-            $this->assertContains($expectedFile, $files);
         }
+
+        $Zipper = new ZipperReader($target);
+        array_unshift($expectedFiles, 'TestApp' . DS);
+        $this->assertSame($expectedFiles, $Zipper->list());
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
         $FilesBackup->create($target);
@@ -70,15 +86,13 @@ class FilesBackupTest extends TestCase
      */
     public function testGetAllFiles(): void
     {
+        $expectedFiles = $this->getExpectedFiles();
+
         $FilesBackup = new FilesBackup(APP);
-        $files = $FilesBackup->getAllFiles();
-        $this->assertContains(APP . 'example.php', $files);
-        $this->assertContains(APP . 'empty', $files);
-        $this->assertContains(APP . '400x400.jpeg', $files);
-        $this->assertNotContains(APP . 'vendor' . DS . 'vendor.php', $files);
+        $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
 
         $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
-        $files = $FilesBackup->getAllFiles();
-        $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $files);
+        array_unshift($expectedFiles, APP . 'vendor' . DS . 'vendor.php');
+        $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
     }
 }

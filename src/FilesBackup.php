@@ -19,6 +19,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tools\Event\EventDispatcherTrait;
 use Tools\Exceptionist;
+use Tools\Filesystem;
 use ZipArchive;
 
 /**
@@ -99,11 +100,14 @@ class FilesBackup
             throw new ErrorException(sprintf('Unable to create `%s`', $target));
         }
 
-        $appName = basename($this->source);
-        $ZipArchive->addEmptyDir($appName);
+        //Adds the main directory
+        $ZipArchive->addEmptyDir(basename($this->source) . DS);
+        $this->dispatchEvent('FilesBackup.fileAdded', basename($this->source) . DS);
 
+        //Adds all files and directories
+        $Filesystem = new Filesystem();
         foreach ($this->getAllFiles() as $filename) {
-            $relFilename = $appName . DS . basename($filename);
+            $relFilename = $Filesystem->makePathRelative(dirname($filename), dirname($this->source)) . basename($filename);
             $ZipArchive->addFile($filename, $relFilename);
             $this->dispatchEvent('FilesBackup.fileAdded', $relFilename);
         }
