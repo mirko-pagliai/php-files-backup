@@ -131,6 +131,8 @@ class FilesBackup
             $finder->ignoreVCSIgnored(true);
         }
 
+        $finder->sortByName();
+
         foreach ($finder as $file) {
             $files[] = $file->getRealPath();
         }

@@ -73,7 +73,7 @@ class FilesBackupTest extends TestCase
         $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
 
         $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
-        array_unshift($expectedFiles, APP . 'vendor' . DS . 'vendor.php');
-        $this->assertEqualsCanonicalizing($expectedFiles, $FilesBackup->getAllFiles());
+        $expectedFiles[] = APP . 'vendor' . DS . 'vendor.php';
+        $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
     }
 }

@@ -32,11 +32,11 @@ class TestCase extends BaseTestCase
         $dir = $relativePath ? array_value_last(array_filter(explode(DS, APP))) . DS : APP;
 
         return [
-            $dir . 'example.php',
-            $dir . 'empty',
             $dir . '400x400.jpeg',
-            $dir . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile',
+            $dir . 'empty',
+            $dir . 'example.php',
             $dir . 'subDir' . DS . 'subDirFile',
+            $dir . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile',
         ];
     }
 }
