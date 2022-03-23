@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace FilesBackup\Test\TestCase\Command;
 
 use FilesBackup\Command\FilesBackupCommand;
+use FilesBackup\TestSuite\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Tools\TestSuite\TestCase;
 
 /**
  * FilesBackupCommandTest class

@@ -16,8 +16,8 @@ namespace FilesBackup\Test\TestCase;
 
 use FilesBackup\FilesBackup;
 use FilesBackup\Test\ZipperReader;
+use FilesBackup\TestSuite\TestCase;
 use Tools\TestSuite\EventAssertTrait;
-use Tools\TestSuite\TestCase;
 
 /**
  * FilesBackupTest class
@@ -25,25 +25,6 @@ use Tools\TestSuite\TestCase;
 class FilesBackupTest extends TestCase
 {
     use EventAssertTrait;
-
-    /**
-     * Internal method to get the expected files from a standard (default options)
-     *  backups of `APP` directory
-     * @param bool $relativePath If `true` paths will be relative
-     * @return array
-     */
-    protected function getExpectedFiles(bool $relativePath = false): array
-    {
-        $dir = $relativePath ? array_value_last(array_filter(explode(DS, APP))) . DS : APP;
-
-        return [
-            $dir . 'example.php',
-            $dir . 'empty',
-            $dir . '400x400.jpeg',
-            $dir . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile',
-            $dir . 'subDir' . DS . 'subDirFile',
-        ];
-    }
 
     /**
      * Test for `__construct()` method, with a no directory source
@@ -93,6 +74,6 @@ class FilesBackupTest extends TestCase
 
         $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
         array_unshift($expectedFiles, APP . 'vendor' . DS . 'vendor.php');
-        $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
+        $this->assertEqualsCanonicalizing($expectedFiles, $FilesBackup->getAllFiles());
     }
 }
