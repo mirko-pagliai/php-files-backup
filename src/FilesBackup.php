@@ -107,7 +107,7 @@ class FilesBackup
         //Adds all files and directories
         $Filesystem = new Filesystem();
         foreach ($this->getAllFiles() as $filename) {
-            $relFilename = $Filesystem->makePathRelative(dirname($filename), dirname($this->source)) . basename($filename);
+            $relFilename = $Filesystem->makePathRelative($filename, dirname($this->source));
             $ZipArchive->addFile($filename, $relFilename);
             $this->dispatchEvent('FilesBackup.fileAdded', $relFilename);
         }
