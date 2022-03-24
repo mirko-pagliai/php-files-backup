@@ -49,12 +49,11 @@ class FilesBackupCommand extends Command
     protected function configure(): void
     {
         $this->setHelp('This command performs a files backup');
+        $defaultSource = defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd());
 
         $this->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create');
-
-        $defaultSource = defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd());
         $this->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', $defaultSource);
-
+        $this->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative');
         $this->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
     }
 
@@ -73,6 +72,13 @@ class FilesBackupCommand extends Command
         $output->writeln('Target: `' . $target . '`');
 
         //Sets options
+        if ($input->getOption('exclude')) {
+            $options['exclude'] = $input->getOption('exclude');
+            $excludedDirs = implode(', ', array_map(function ($dir) {
+                return '`' . $dir . '`';
+            }, (array)$input->getOption('exclude')));
+            $output->writeln('Excluded directories: ' . $excludedDirs);
+        }
         if ($input->getOption('git-ignore')) {
             $options['git_ignore'] = true;
             $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');

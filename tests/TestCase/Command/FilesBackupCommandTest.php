@@ -41,12 +41,7 @@ class FilesBackupCommandTest extends TestCase
      */
     public function testExecute(): void
     {
-        $expectedFiles = [
-            'TestApp' . DS . 'example.php',
-            'TestApp' . DS . 'empty',
-            'TestApp' . DS . '400x400.jpeg',
-        ];
-
+        $expectedFiles = $this->getExpectedFiles(true);
         $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
         $commandTester = $this->getCommandTester();
@@ -66,6 +61,23 @@ class FilesBackupCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file are automatically ignored', $output);
+
+        @unlink($target);
+
+        $commandTester->execute(compact('target') + ['--exclude' => 'subDir/subSubDir']);
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Excluded directories: `subDir/subSubDir`', $output);
+        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+
+        @unlink($target);
+
+        $commandTester->execute(compact('target') + ['--exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Excluded directories: `subDir/subSubDir`, `subDir/anotherSubDir`', $output);
+        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
     }
 
     /**
