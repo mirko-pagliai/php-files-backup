@@ -35,6 +35,7 @@ class TestCase extends BaseTestCase
             $dir . '400x400.jpeg',
             $dir . 'empty',
             $dir . 'example.php',
+            $dir . 'subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile',
             $dir . 'subDir' . DS . 'subDirFile',
             $dir . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile',
         ];
