@@ -47,6 +47,9 @@ class FilesBackup
      * Constructor.
      *
      * Options:
+     *  - `exclude`: excludes directories from matching with the `exclude()`
+     *      method provided by the `Finder` component of Symfony. Directories
+     *      passed as argument (string or array of strings) must be relative;
      *  - `git_ignore`: with `true`, it automatically ignores the files and
      *      directories specified in the `.gitignore` file (default `true`).
      * @param string $source Source directory you want to backup
@@ -72,6 +75,8 @@ class FilesBackup
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->define('exclude')
+            ->allowedTypes('string', 'string[]');
         $resolver->define('git_ignore')
             ->allowedTypes('bool')
             ->default(true);
@@ -127,6 +132,9 @@ class FilesBackup
         $finder = new Finder();
         $finder->files()->in($this->source);
 
+        if (isset($this->options['exclude'])) {
+            $finder->exclude($this->options['exclude']);
+        }
         if ($this->options['git_ignore']) {
             $finder->ignoreVCSIgnored(true);
         }

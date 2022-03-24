@@ -68,6 +68,7 @@ class FilesBackupTest extends TestCase
     public function testGetAllFiles(): void
     {
         $expectedFiles = $this->getExpectedFiles();
+        $countExpectedFiles = count($expectedFiles);
 
         $FilesBackup = new FilesBackup(APP);
         $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
@@ -75,5 +76,16 @@ class FilesBackupTest extends TestCase
         $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
         $expectedFiles[] = APP . 'vendor' . DS . 'vendor.php';
         $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
+
+        $FilesBackup = new FilesBackup(APP, ['exclude' => 'subDir/subSubDir']);
+        $files = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles - 1, $files);
+        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $files);
+
+        $FilesBackup = new FilesBackup(APP, ['exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
+        $files = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles - 2, $files);
+        $this->assertNotContains(APP . 'subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile', $files);
+        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $files);
     }
 }
