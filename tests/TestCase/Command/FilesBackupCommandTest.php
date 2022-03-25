@@ -54,6 +54,7 @@ class FilesBackupCommandTest extends TestCase
         foreach ($expectedFiles as $filename) {
             $this->assertStringContainsString('Added file: `' . $filename . '`', $output);
         }
+        $this->assertStringNotContainsString('The files and directories specified in the `.git_ignore` file are automatically ignored', $output);
 
         @unlink($target);
 
