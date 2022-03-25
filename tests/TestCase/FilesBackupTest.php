@@ -44,9 +44,10 @@ class FilesBackupTest extends TestCase
     public function testCreate(): void
     {
         $expectedFiles = $this->getExpectedFiles(true);
+        $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
         $FilesBackup = new FilesBackup(APP);
-        $target = $FilesBackup->create(TMP . 'tmp_' . mt_rand() . '.zip');
+        $this->assertSame($target, $FilesBackup->create($target));
         $this->assertFileExists($target);
 
         foreach ($expectedFiles as $expectedFile) {
