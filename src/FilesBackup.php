@@ -106,8 +106,8 @@ class FilesBackup
         }
 
         //Adds the main directory
-        $ZipArchive->addEmptyDir(basename($this->source) . DS);
-        $this->dispatchEvent('FilesBackup.fileAdded', basename($this->source) . DS);
+        $ZipArchive->addEmptyDir(basename($this->source));
+        $this->dispatchEvent('FilesBackup.fileAdded', basename($this->source));
 
         //Adds all files and directories
         $Filesystem = new Filesystem();
