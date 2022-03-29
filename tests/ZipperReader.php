@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace FilesBackup\Test;
 
 use ErrorException;
+use Tools\Filesystem;
 use ZipArchive;
 
 /**
@@ -71,7 +72,7 @@ class ZipperReader
     {
         $count = $this->count();
         for ($i = 0; $i < $count; $i++) {
-            $files[] = \Tools\Filesystem::instance()->normalizePath($this->ZipArchive->getNameIndex($i));
+            $files[] = Filesystem::instance()->normalizePath($this->ZipArchive->getNameIndex($i) ?: '');
         }
 
         return $files ?? [];

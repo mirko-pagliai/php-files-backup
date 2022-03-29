@@ -56,7 +56,6 @@ class FilesBackupTest extends TestCase
 
         $Zipper = new ZipperReader($target);
         array_unshift($expectedFiles, 'TestApp' . DS);
-        debug($Zipper->list());
         $this->assertSame($expectedFiles, $Zipper->list());
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
