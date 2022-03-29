@@ -71,7 +71,7 @@ class ZipperReader
     {
         $count = $this->count();
         for ($i = 0; $i < $count; $i++) {
-            $files[] = $this->ZipArchive->getNameIndex($i);
+            $files[] = \Tools\Filesystem::instance()->normalizePath($this->ZipArchive->getNameIndex($i));
         }
 
         return $files ?? [];
