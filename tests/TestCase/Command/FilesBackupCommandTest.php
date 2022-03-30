@@ -48,10 +48,12 @@ class FilesBackupCommandTest extends TestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Source: `' . APP . '`', $output);
         $this->assertStringContainsString('Target: `' . $target . '`', $output);
-        $this->assertStringContainsString('Backup exported successfully to: `' . $target . '`', $output);
+        $this->assertStringContainsString('Opened zip file: `' . $target . '`', $output);
         foreach ($expectedFiles as $filename) {
             $this->assertStringContainsString('Added file: `' . $filename . '`', $output);
         }
+        $this->assertStringContainsString('Closed zip file: `' . $target . '`', $output);
+        $this->assertStringContainsString('Backup exported successfully to: `' . $target . '`', $output);
         $this->assertStringNotContainsString('The files and directories specified in the `.git_ignore` file are automatically ignored', $output);
 
         @unlink($target);

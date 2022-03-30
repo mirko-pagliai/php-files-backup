@@ -87,8 +87,14 @@ class FilesBackupCommand extends Command
             $FilesBackup = new FilesBackup($source, $options ?? []);
 
             //Sets event listeners
+            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.zipOpened', function (Event $event) use ($output) {
+                $output->writeln('Opened zip file: `' . $event->getArg(0) . '`');
+            });
             $FilesBackup->getEventDispatcher()->addListener('FilesBackup.fileAdded', function (Event $event) use ($output) {
                 $output->writeln('Added file: `' . $event->getArg(0) . '`');
+            });
+            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.zipClosed', function (Event $event) use ($output) {
+                $output->writeln('Closed zip file: `' . $event->getArg(0) . '`');
             });
 
             $FilesBackup->create($target);
