@@ -16,6 +16,7 @@ namespace FilesBackup;
 
 use ErrorException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tools\Event\EventDispatcherTrait;
 use Tools\Exceptionist;
@@ -53,7 +54,7 @@ class FilesBackup
      *  - `git_ignore`: with `true`, it automatically ignores the files and
      *      directories specified in the `.gitignore` file (default `true`).
      * @param string $source Source directory you want to backup
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      * @throws \Tools\Exception\FileNotExistsException
      * @throws \Tools\Exception\NotReadableException
      */
@@ -69,7 +70,9 @@ class FilesBackup
     }
 
     /**
-     * Option configurations
+     * Options configuration.
+     *
+     * For more information on options, see the constructor method.
      * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver OptionsResolver
      * @return void
      */
@@ -125,7 +128,7 @@ class FilesBackup
     /**
      * Gets all files from the source, excluding files/directories matching the
      *  .gitignore patterns
-     * @return array
+     * @return array<string>
      */
     public function getAllFiles(): array
     {
@@ -139,12 +142,8 @@ class FilesBackup
             $finder->ignoreVCSIgnored(true);
         }
 
-        $finder->sortByName();
-
-        foreach ($finder as $file) {
-            $files[] = $file->getRealPath();
-        }
-
-        return $files ?? [];
+        return array_map(function (SplFileInfo $file): string {
+            return $file->getRealPath() ?: '';
+        }, iterator_to_array($finder->sortByName(), false));
     }
 }

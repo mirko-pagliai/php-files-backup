@@ -30,9 +30,7 @@ class FilesBackupCommandTest extends TestCase
      */
     protected function getCommandTester(): CommandTester
     {
-        $command = new FilesBackupCommand();
-
-        return new CommandTester($command);
+        return new CommandTester(new FilesBackupCommand());
     }
 
     /**
@@ -58,6 +56,7 @@ class FilesBackupCommandTest extends TestCase
 
         @unlink($target);
 
+        //With `git-ignore` option
         $commandTester->execute(compact('target') + ['--git-ignore' => true]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
@@ -65,6 +64,7 @@ class FilesBackupCommandTest extends TestCase
 
         @unlink($target);
 
+        //With `exclude` option
         $commandTester->execute(compact('target') + ['--exclude' => 'subDir/subSubDir']);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
@@ -73,6 +73,7 @@ class FilesBackupCommandTest extends TestCase
 
         @unlink($target);
 
+        //With `exclude` option as array
         $commandTester->execute(compact('target') + ['--exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
@@ -82,10 +83,10 @@ class FilesBackupCommandTest extends TestCase
     }
 
     /**
-     * Test for `execute()` method, with failure
+     * Test for `execute()` method on failure
      * @test
      */
-    public function testExecuteWithFailure(): void
+    public function testExecuteOnFailure(): void
     {
         $target = TMP . 'noExisting' . DS . 'file.zip';
 

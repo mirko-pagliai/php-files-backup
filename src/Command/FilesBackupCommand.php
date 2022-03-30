@@ -48,13 +48,11 @@ class FilesBackupCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setHelp('This command performs a files backup');
-        $defaultSource = defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd());
-
-        $this->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create');
-        $this->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', $defaultSource);
-        $this->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative');
-        $this->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
+        $this->setHelp('This command performs a files backup')
+            ->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create')
+            ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
+            ->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative')
+            ->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
     }
 
     /**
@@ -71,14 +69,15 @@ class FilesBackupCommand extends Command
         $output->writeln('Source: `' . $source . '`');
         $output->writeln('Target: `' . $target . '`');
 
-        //Sets options
+        //Sets `exclude` option
         if ($input->getOption('exclude')) {
             $options['exclude'] = $input->getOption('exclude');
-            $excludedDirs = implode(', ', array_map(function ($dir) {
+            $excludedDirs = implode(', ', array_map(function (string $dir): string {
                 return '`' . $dir . '`';
             }, (array)$input->getOption('exclude')));
             $output->writeln('Excluded directories: ' . $excludedDirs);
         }
+        //Sets `git-ignore` option
         if ($input->getOption('git-ignore')) {
             $options['git_ignore'] = true;
             $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
