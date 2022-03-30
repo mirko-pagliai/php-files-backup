@@ -90,8 +90,9 @@ class FilesBackup
      *
      * ### Events
      * This method will trigger some events:
-     *  - `FilesBackup.fileAdded`: will be triggered when a file is added to the
-     *      backup.
+     *  - `FilesBackup.zipOpened`: when the zip file is opened;
+     *  - `FilesBackup.zipClosed`: when the zip file is closed;
+     *  - `FilesBackup.fileAdded`: when a file is added to the backup.
      * @param string $target Zip backup you want to create
      * @return string
      * @throws \ErrorException
@@ -107,6 +108,7 @@ class FilesBackup
         if ($ZipArchive->open($target, ZipArchive::CREATE) !== true) {
             throw new ErrorException(sprintf('Unable to create `%s`', $target));
         }
+        $this->dispatchEvent('FilesBackup.zipOpened', $target);
 
         //Adds the main directory
         $ZipArchive->addEmptyDir(basename($this->source));
@@ -121,6 +123,7 @@ class FilesBackup
         }
 
         $ZipArchive->close();
+        $this->dispatchEvent('FilesBackup.zipClosed', $target);
 
         return $target;
     }

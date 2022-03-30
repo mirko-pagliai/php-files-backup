@@ -47,12 +47,14 @@ class FilesBackupTest extends TestCase
         $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
         $FilesBackup = new FilesBackup(APP);
+        $EventDispatcher = $FilesBackup->getEventDispatcher();
         $this->assertSame($target, $FilesBackup->create($target));
         $this->assertFileExists($target);
-
+        $this->assertEventFiredWithArgs('FilesBackup.zipOpened', [$target], $EventDispatcher);
         foreach ($expectedFiles as $expectedFile) {
-            $this->assertEventFiredWithArgs('FilesBackup.fileAdded', [$expectedFile], $FilesBackup->getEventDispatcher());
+            $this->assertEventFiredWithArgs('FilesBackup.fileAdded', [$expectedFile], $EventDispatcher);
         }
+        $this->assertEventFiredWithArgs('FilesBackup.zipClosed', [$target], $EventDispatcher);
 
         $Zipper = new ZipperReader($target);
         array_unshift($expectedFiles, 'TestApp' . DS);
