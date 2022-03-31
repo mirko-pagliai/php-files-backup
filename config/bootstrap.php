@@ -18,5 +18,5 @@ if (!defined('DS')) {
 }
 
 if (!defined('ROOT')) {
-    define('ROOT', dirname(__DIR__) . DS);
+    define('ROOT', getcwd() . DS);
 }

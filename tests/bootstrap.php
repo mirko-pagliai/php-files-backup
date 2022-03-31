@@ -17,14 +17,15 @@ ini_set('intl.default_locale', 'en_US');
 date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
 
+if (!defined('ROOT')) {
+    define('ROOT', dirname(__DIR__) . DS);
+}
+
 require ROOT . 'vendor/autoload.php';
 require ROOT . 'config/bootstrap.php';
 
 define('TESTS', ROOT . 'tests' . DS);
-define('TEST_APP', TESTS . 'test_app' . DS);
-define('APP', TEST_APP . 'TestApp' . DS);
-define('APP_DIR', 'test_app');
+define('APP', TESTS . 'test_app' . DS . 'TestApp' . DS);
 define('TMP', sys_get_temp_dir() . DS . 'php-files-backup' . DS);
-define('CONFIG', APP . 'config' . DS);
 
 @mkdir(TMP, 0777, true);
