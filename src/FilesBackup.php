@@ -145,8 +145,12 @@ class FilesBackup
             $finder->ignoreVCSIgnored(true);
         }
 
+        $finder->filter(function (SplFileInfo $file): bool {
+            return $file->isReadable();
+        })->sortByName();
+
         return array_map(function (SplFileInfo $file): string {
-            return $file->getRealPath() ?: '';
-        }, iterator_to_array($finder->sortByName(), false));
+            return $file->getPathname() ?: '';
+        }, iterator_to_array($finder, false));
     }
 }
