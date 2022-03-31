@@ -14,22 +14,19 @@ declare(strict_types=1);
  */
 namespace FilesBackup\Command;
 
+use FilesBackup\Command\FilesBackupCommandSubscriber;
 use FilesBackup\FilesBackup;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tools\Event\Event;
-use Tools\Event\EventDispatcherTrait;
 
 /**
  * FilesBackupCommand class
  */
 class FilesBackupCommand extends Command
 {
-    use EventDispatcherTrait;
-
     /**
      * Name of the command
      * @var string
@@ -85,18 +82,7 @@ class FilesBackupCommand extends Command
 
         try {
             $FilesBackup = new FilesBackup($source, $options ?? []);
-
-            //Sets event listeners
-            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.zipOpened', function (Event $event) use ($output) {
-                $output->writeln('Opened zip file: `' . $event->getArg(0) . '`');
-            });
-            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.fileAdded', function (Event $event) use ($output) {
-                $output->writeln('Added file: `' . $event->getArg(0) . '`');
-            });
-            $FilesBackup->getEventDispatcher()->addListener('FilesBackup.zipClosed', function (Event $event) use ($output) {
-                $output->writeln('Closed zip file: `' . $event->getArg(0) . '`');
-            });
-
+            $FilesBackup->getEventDispatcher()->addSubscriber(new FilesBackupCommandSubscriber($output));
             $FilesBackup->create($target);
 
             $output->writeln('<info>Backup exported successfully to: `' . $target . '`</info>');
