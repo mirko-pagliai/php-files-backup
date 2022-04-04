@@ -18,6 +18,7 @@ use FilesBackup\FilesBackup;
 use FilesBackup\Test\ZipperReader;
 use FilesBackup\TestSuite\TestCase;
 use Tools\TestSuite\EventAssertTrait;
+use ZipArchive;
 
 /**
  * FilesBackupTest class
@@ -61,6 +62,30 @@ class FilesBackupTest extends TestCase
         $this->assertSame($expectedFiles, $Zipper->list());
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
+        $FilesBackup->create($target);
+    }
+
+    /**
+     * Test for `create()` method, with a `ZipArchive` failure
+     * @test
+     */
+    public function testCreateOnZipArchiveFailure(): void
+    {
+        $target = TMP . 'tmp_' . mt_rand() . '.zip';
+
+        $ZipArchive = $this->getMockBuilder(ZipArchive::class)
+            ->setMethods(['open'])
+            ->getMock();
+        $ZipArchive->method('open')->willReturn(false);
+
+        $FilesBackup = $this->getMockBuilder(FilesBackup::class)
+            ->setMethods(['getZipArchive'])
+            ->setConstructorArgs([APP])
+            ->getMock();
+
+        $FilesBackup->method('getZipArchive')->willReturn($ZipArchive);
+
+        $this->expectExceptionMessage('Unable to create `' . $target . '`');
         $FilesBackup->create($target);
     }
 
