@@ -1,5 +1,6 @@
 ## 1.0 branch
 ### 1.0.1-beta2
+* no longer ignores hidden files by default;
 * added `FilesBackupCommandSubscriber` class, with command methods for events;
 * fixed little bug for `FilesBackup::getAllFiles()` method.
 

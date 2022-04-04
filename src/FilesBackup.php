@@ -153,7 +153,7 @@ class FilesBackup
     public function getAllFiles(): array
     {
         $finder = new Finder();
-        $finder->files()->in($this->source);
+        $finder->files()->in($this->source)->ignoreDotFiles(false);
 
         if (isset($this->options['exclude'])) {
             $finder->exclude($this->options['exclude']);
