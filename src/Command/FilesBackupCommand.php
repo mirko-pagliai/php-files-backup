@@ -49,7 +49,8 @@ class FilesBackupCommand extends Command
             ->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create')
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
             ->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative')
-            ->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
+            ->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file')
+            ->addOption('include', 'i', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'includes directories excluded from the `git-ignore` option');
     }
 
     /**
@@ -78,6 +79,14 @@ class FilesBackupCommand extends Command
         if ($input->getOption('git-ignore')) {
             $options['git_ignore'] = true;
             $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
+        }
+        //Sets `include` option
+        if ($input->getOption('include')) {
+            $options['include'] = $input->getOption('include');
+            $includedDirs = implode(', ', array_map(function (string $dir): string {
+                return '`' . $dir . '`';
+            }, (array)$input->getOption('include')));
+            $output->writeln('Included directories: ' . $includedDirs);
         }
 
         try {

@@ -82,6 +82,26 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Excluded directories: `subDir/subSubDir`, `subDir/anotherSubDir`', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
+
+        @unlink($target);
+
+        //With `include` option
+        $commandTester->execute(compact('target') + ['--include' => 'vendor']);
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Included directories: `vendor`', $output);
+        $this->assertStringNotContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
+        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+
+        @unlink($target);
+
+        //With `exclude` option as array
+        $commandTester->execute(compact('target') + ['--include' => ['logs', 'vendor']]);
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Included directories: `logs`, `vendor`', $output);
+        $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
+        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
     }
 
     /**
