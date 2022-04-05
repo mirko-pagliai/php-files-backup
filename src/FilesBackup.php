@@ -57,7 +57,8 @@ class FilesBackup
      *      method provided by the `Finder` component of Symfony. Directories
      *      passed as argument (string or array of strings) must be relative;
      *  - `git_ignore`: with `true`, it automatically ignores the files and
-     *      directories specified in the `.gitignore` file (default `true`).
+     *      directories specified in the `.gitignore` file (default `true`);
+     *  - `include`: includes directories excluded from the `git_ignore` option.
      * @param string $source Source directory you want to backup
      * @param array<string, mixed> $options Options
      * @throws \Tools\Exception\FileNotExistsException
@@ -88,6 +89,20 @@ class FilesBackup
         $resolver->define('git_ignore')
             ->allowedTypes('bool')
             ->default(true);
+        $resolver->define('include')
+            ->allowedTypes('string', 'string[]');
+    }
+
+    /**
+     * Internal method to get a `Finder` instance with a common configuration
+     * @param string|string[] $dirs A directory path or an array of directories
+     * @return \Symfony\Component\Finder\Finder
+     */
+    protected function getFinder($dirs): Finder
+    {
+        $Finder = new Finder();
+
+        return $Finder->files()->in($dirs)->ignoreDotFiles(false);
     }
 
     /**
@@ -146,28 +161,32 @@ class FilesBackup
     }
 
     /**
-     * Gets all files from the source, excluding files/directories matching the
-     *  .gitignore patterns
-     * @return array<string>
+     * Gets all files from the source
+     * @return string[]
      */
     public function getAllFiles(): array
     {
-        $finder = new Finder();
-        $finder->files()->in($this->source)->ignoreDotFiles(false);
+        $Finder = $this->getFinder($this->source);
 
         if (isset($this->options['exclude'])) {
-            $finder->exclude($this->options['exclude']);
+            $Finder->exclude($this->options['exclude']);
         }
         if ($this->options['git_ignore']) {
-            $finder->ignoreVCSIgnored(true);
+            $Finder->ignoreVCSIgnored(true);
+        }
+        if (isset($this->options['include'])) {
+            $dirs = array_map(function (string $dir): string {
+                return Filesystem::instance()->makePathAbsolute($dir, $this->source);
+            }, (array)($this->options['include']));
+            $Finder->append($this->getFinder($dirs));
         }
 
-        $finder->filter(function (SplFileInfo $file): bool {
+        $Finder->filter(function (SplFileInfo $file): bool {
             return $file->isReadable();
-        })->sortByName();
+        });
 
         return array_map(function (SplFileInfo $file): string {
             return $file->getPathname() ?: '';
-        }, iterator_to_array($finder, false));
+        }, iterator_to_array($Finder->sortByName(), false));
     }
 }

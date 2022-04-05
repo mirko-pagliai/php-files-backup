@@ -102,18 +102,36 @@ class FilesBackupTest extends TestCase
         $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
 
         $FilesBackup = new FilesBackup(APP, ['git_ignore' => false]);
-        $expectedFiles[] = APP . 'vendor' . DS . 'vendor.php';
-        $this->assertSame($expectedFiles, $FilesBackup->getAllFiles());
+        $result = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles + 2, $result);
+        $this->assertContains(APP . 'logs' . DS . 'error.log', $result);
+        $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $result);
 
         $FilesBackup = new FilesBackup(APP, ['exclude' => 'subDir/subSubDir']);
-        $files = $FilesBackup->getAllFiles();
-        $this->assertCount($countExpectedFiles - 1, $files);
-        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $files);
+        $result = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles - 1, $result);
+        $this->assertNotContains(APP . 'logs' . DS . 'error.log', $result);
+        $this->assertNotContains(APP . 'vendor' . DS . 'vendor.php', $result);
+        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $result);
 
         $FilesBackup = new FilesBackup(APP, ['exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
-        $files = $FilesBackup->getAllFiles();
-        $this->assertCount($countExpectedFiles - 2, $files);
-        $this->assertNotContains(APP . 'subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile', $files);
-        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $files);
+        $result = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles - 2, $result);
+        $this->assertNotContains(APP . 'logs' . DS . 'error.log', $result);
+        $this->assertNotContains(APP . 'vendor' . DS . 'vendor.php', $result);
+        $this->assertNotContains(APP . 'subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile', $result);
+        $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $result);
+
+        $FilesBackup = new FilesBackup(APP, ['include' => 'vendor']);
+        $result = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles + 1, $result);
+        $this->assertNotContains(APP . 'logs' . DS . 'error.log', $result);
+        $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $result);
+
+        $FilesBackup = new FilesBackup(APP, ['include' => ['logs', 'vendor']]);
+        $result = $FilesBackup->getAllFiles();
+        $this->assertCount($countExpectedFiles + 2, $result);
+        $this->assertContains(APP . 'logs' . DS . 'error.log', $result);
+        $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $result);
     }
 }
