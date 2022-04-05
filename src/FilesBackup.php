@@ -146,7 +146,7 @@ class FilesBackup
             $this->dispatchEvent('FilesBackup.fileAdded', $relFilename);
         }
 
-       $ZipArchive->close();
+        $ZipArchive->close();
         $this->dispatchEvent('FilesBackup.zipClosed', $target);
 
         return $target;
