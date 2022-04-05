@@ -1,7 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: src/FilesBackup.php
-
