@@ -33,11 +33,6 @@ class FilesBackup
     use EventDispatcherTrait;
 
     /**
-     * @var \ZipArchive
-     */
-    protected $ZipArchive;
-
-    /**
      * Source directory
      * @var string
      */
@@ -111,11 +106,7 @@ class FilesBackup
      */
     protected function getZipArchive(): ZipArchive
     {
-        if (!$this->ZipArchive) {
-            $this->ZipArchive = new ZipArchive();
-        }
-
-        return $this->ZipArchive;
+        return new ZipArchive();
     }
 
     /**
@@ -137,24 +128,25 @@ class FilesBackup
         Exceptionist::fileNotExists($target, 'File `' . $target . '` already exists');
         Exceptionist::isWritable(dirname($target));
 
-        if ($this->getZipArchive()->open($target, ZipArchive::CREATE) !== true) {
+        $ZipArchive = $this->getZipArchive();
+        if ($ZipArchive->open($target, ZipArchive::CREATE) !== true) {
             throw new ErrorException(sprintf('Unable to create `%s`', $target));
         }
         $this->dispatchEvent('FilesBackup.zipOpened', $target);
 
         //Adds the main directory
-        $this->getZipArchive()->addEmptyDir(basename($this->source));
+        $ZipArchive->addEmptyDir(basename($this->source));
         $this->dispatchEvent('FilesBackup.fileAdded', basename($this->source));
 
         //Adds all files and directories
         $Filesystem = new Filesystem();
         foreach ($this->getAllFiles() as $filename) {
             $relFilename = $Filesystem->makePathRelative($filename, dirname($this->source));
-            $this->getZipArchive()->addFile($filename, $relFilename);
+            $ZipArchive->addFile($filename, $relFilename);
             $this->dispatchEvent('FilesBackup.fileAdded', $relFilename);
         }
 
-        $this->getZipArchive()->close();
+       $ZipArchive->close();
         $this->dispatchEvent('FilesBackup.zipClosed', $target);
 
         return $target;
