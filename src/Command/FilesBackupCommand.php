@@ -48,9 +48,9 @@ class FilesBackupCommand extends Command
         $this->setHelp('This command performs a files backup')
             ->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create')
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
-            ->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative')
+            ->addOption('exclude', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Excludes directories from matching. Directories must be relative')
             ->addOption('no-git-ignore', null, InputOption::VALUE_NONE, 'Does not ignore files and directories specified in the `.gitignore` file')
-            ->addOption('include', 'i', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'includes directories excluded by the `.gitignore` file');
+            ->addOption('include', 'i', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'includes directories excluded by the `.gitignore` file');
     }
 
     /**
