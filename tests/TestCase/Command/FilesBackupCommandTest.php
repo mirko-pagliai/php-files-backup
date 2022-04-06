@@ -63,8 +63,8 @@ class FilesBackupCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will not be ignored', $output);
-        $this->assertStringContainsString('Added file: `TestApp/logs/error.log`', $output);
-        $this->assertStringContainsString('Added file: `TestApp/vendor/vendor.php`', $output);
+        $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
+        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
 
         @unlink($target);
 
@@ -72,7 +72,7 @@ class FilesBackupCommandTest extends TestCase
         $commandTester->execute(compact('target') + ['--exclude' => 'subDir/subSubDir']);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Excluded directories: `subDir/subSubDir`', $output);
+        $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`', $output);
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
 
@@ -82,7 +82,7 @@ class FilesBackupCommandTest extends TestCase
         $commandTester->execute(compact('target') + ['--exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Excluded directories: `subDir/subSubDir`, `subDir/anotherSubDir`', $output);
+        $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`, `subDir' . DS . 'anotherSubDir`', $output);
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
