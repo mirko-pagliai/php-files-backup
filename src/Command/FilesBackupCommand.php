@@ -49,7 +49,8 @@ class FilesBackupCommand extends Command
             ->addArgument('target', InputArgument::REQUIRED, 'Target zip file you want to create')
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
             ->addOption('exclude', 'e', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Excludes directories from matching. Directories must be relative')
-            ->addOption('git-ignore', null, InputOption::VALUE_NONE, 'Automatically ignores the files and directories specified in the `.gitignore` file');
+            ->addOption('no-git-ignore', null, InputOption::VALUE_NONE, 'Does not ignore files and directories specified in the `.gitignore` file')
+            ->addOption('include', 'i', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'includes directories excluded by the `.gitignore` file');
     }
 
     /**
@@ -66,7 +67,7 @@ class FilesBackupCommand extends Command
         $output->writeln('Source: `' . $source . '`');
         $output->writeln('Target: `' . $target . '`');
 
-        //Sets `exclude` option
+        //Sets `--exclude` option
         if ($input->getOption('exclude')) {
             $options['exclude'] = $input->getOption('exclude');
             $excludedDirs = implode(', ', array_map(function (string $dir): string {
@@ -74,11 +75,23 @@ class FilesBackupCommand extends Command
             }, (array)$input->getOption('exclude')));
             $output->writeln('Excluded directories: ' . $excludedDirs);
         }
-        //Sets `git-ignore` option
-        if ($input->getOption('git-ignore')) {
-            $options['git_ignore'] = true;
-            $output->writeln('The files and directories specified in the `.git_ignore` file are automatically ignored');
+        //Sets `--no-git-ignore` option
+        if ($input->getOption('no-git-ignore')) {
+            $options['git_ignore'] = false;
+            $output->writeln('The files and directories specified in the `.git_ignore` file will not be ignored');
+        } else {
+            $output->writeln('The files and directories specified in the `.git_ignore` file will be automatically ignored');
         }
+        //Sets `--include` option
+        if ($input->getOption('include')) {
+            $options['include'] = $input->getOption('include');
+            $includedDirs = implode(', ', array_map(function (string $dir): string {
+                return '`' . $dir . '`';
+            }, (array)$input->getOption('include')));
+            $output->writeln('Included directories: ' . $includedDirs);
+        }
+
+        $output->writeln('<info>==========================</>');
 
         try {
             $FilesBackup = new FilesBackup($source, $options ?? []);

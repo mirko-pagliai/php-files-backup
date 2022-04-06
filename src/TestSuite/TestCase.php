@@ -32,6 +32,8 @@ class TestCase extends BaseTestCase
         $dir = $relativePath ? array_value_last(array_filter(explode(DS, APP))) . DS : APP;
 
         return [
+            $dir . '.gitignore',
+            $dir . '.hiddenFile',
             $dir . '400x400.jpeg',
             $dir . 'empty',
             $dir . 'example.php',
