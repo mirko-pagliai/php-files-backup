@@ -69,7 +69,7 @@ class FilesBackupCommandTest extends TestCase
         @unlink($target);
 
         //With `--exclude` option
-        $commandTester->execute(compact('target') + ['--exclude' => 'subDir/subSubDir']);
+        $commandTester->execute(compact('target') + ['--exclude' => 'subDir' . DS . 'subSubDir']);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`', $output);
@@ -79,7 +79,7 @@ class FilesBackupCommandTest extends TestCase
         @unlink($target);
 
         //With `--exclude` option as array
-        $commandTester->execute(compact('target') + ['--exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
+        $commandTester->execute(compact('target') + ['--exclude' => ['subDir' . DS . 'subSubDir', 'subDir' . DS . 'anotherSubDir']]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`, `subDir' . DS . 'anotherSubDir`', $output);
