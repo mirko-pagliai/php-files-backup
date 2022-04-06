@@ -6,14 +6,16 @@
     bootstrap="./tests/bootstrap.php"
 >
 
-    <coverage>
-        <include>
-            <directory suffix=".php">./src/</directory>
-        </include>
-    </coverage>
     <testsuites>
         <testsuite name="php-files-backup Test Cases">
             <directory>./tests/TestCase</directory>
         </testsuite>
     </testsuites>
+
+    <!-- configure code coverage -->
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
+    </filter>
 </phpunit>
