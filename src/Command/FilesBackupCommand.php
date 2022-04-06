@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace FilesBackup\Command;
 
+use Exception;
 use FilesBackup\Command\FilesBackupCommandSubscriber;
 use FilesBackup\FilesBackup;
 use Symfony\Component\Console\Command\Command;
@@ -50,7 +51,8 @@ class FilesBackupCommand extends Command
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
             ->addOption('exclude', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Excludes directories from matching. Directories must be relative')
             ->addOption('no-git-ignore', null, InputOption::VALUE_NONE, 'Does not ignore files and directories specified in the `.gitignore` file')
-            ->addOption('include', 'i', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'includes directories excluded by the `.gitignore` file');
+            ->addOption('include', 'i', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'includes directories excluded by the `.gitignore` file')
+            ->addOption('debug', 'd', InputOption::VALUE_NONE, 'Enables debug');
     }
 
     /**
@@ -99,7 +101,10 @@ class FilesBackupCommand extends Command
             $FilesBackup->create($target);
 
             $output->writeln('<info>Backup exported successfully to: `' . $target . '`</info>');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            if ($input->getOption('debug')) {
+                throw $e;
+            }
             $output->writeln('<error>Error: ' . lcfirst($e->getMessage()) . '</error>');
 
             return Command::FAILURE;

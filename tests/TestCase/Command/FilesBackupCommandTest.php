@@ -121,8 +121,11 @@ class FilesBackupCommandTest extends TestCase
         $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
-
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Error: file or directory `' . dirname($target) . '` does not exist', $output);
+
+        //With `--debug` option
+        $this->expectExceptionMessage('File or directory `' . dirname($target) . '` does not exist');
+        $commandTester->execute(compact('target') + ['--debug' => true]);
     }
 }
