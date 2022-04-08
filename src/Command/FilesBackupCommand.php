@@ -97,10 +97,13 @@ class FilesBackupCommand extends Command
 
         try {
             $FilesBackup = new FilesBackup($source, $options ?? []);
-            $FilesBackup->getEventDispatcher()->addSubscriber(new FilesBackupCommandSubscriber($output));
+            $EventDispatcher = $FilesBackup->getEventDispatcher();
+            $EventDispatcher->addSubscriber(new FilesBackupCommandSubscriber($output));
             $FilesBackup->create($target);
 
             $output->writeln('<info>Backup exported successfully to: `' . $target . '`</info>');
+            $fileAddedCount = count($EventDispatcher->getEventList()->extract('FilesBackup.fileAdded'));
+            $output->writeln('<info>File added: ' . $fileAddedCount . '</info>');
         } catch (Exception $e) {
             if ($input->getOption('debug')) {
                 throw $e;

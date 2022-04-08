@@ -55,6 +55,7 @@ class FilesBackupCommandTest extends TestCase
         }
         $this->assertStringContainsString('Closed zip file: `' . $target . '`', $output);
         $this->assertStringContainsString('Backup exported successfully to: `' . $target . '`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles) + 1, $output);
 
         @unlink($target);
 
@@ -65,6 +66,7 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will not be ignored', $output);
         $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
         $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles) + 3, $output);
 
         @unlink($target);
 
@@ -75,6 +77,7 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`', $output);
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles), $output);
 
         @unlink($target);
 
@@ -86,6 +89,7 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
         $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles) - 1, $output);
 
         @unlink($target);
 
@@ -97,6 +101,7 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Included directories: `vendor`', $output);
         $this->assertStringNotContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
         $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles) + 2, $output);
 
         @unlink($target);
 
@@ -108,6 +113,7 @@ class FilesBackupCommandTest extends TestCase
         $this->assertStringContainsString('Included directories: `logs`, `vendor`', $output);
         $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
         $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $this->assertStringContainsString('File added: ' . count($expectedFiles) + 3, $output);
     }
 
     /**
