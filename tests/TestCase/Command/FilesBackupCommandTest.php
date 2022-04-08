@@ -76,7 +76,7 @@ class FilesBackupCommandTest extends TestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`', $output);
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+        $this->assertStringNotContainsString('Added file: `TestApp' . DS . '`subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
         $this->assertStringContainsString('File added: ' . (string)count($expectedFiles), $output);
 
         @unlink($target);
@@ -87,8 +87,8 @@ class FilesBackupCommandTest extends TestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`, `subDir' . DS . 'anotherSubDir`', $output);
         $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
+        $this->assertStringNotContainsString('Added file: `TestApp' . DS . '`subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+        $this->assertStringNotContainsString('Added file: `TestApp' . DS . '`subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
         $this->assertStringContainsString('File added: ' . (string)(count($expectedFiles) - 1), $output);
 
         @unlink($target);
