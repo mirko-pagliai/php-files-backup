@@ -61,9 +61,8 @@ class FilesBackup
      */
     public function __construct(string $source, array $options = [])
     {
-        Exceptionist::isReadable($source);
-        Exceptionist::isDir($source, '`' . $source . '` is not a directory');
-        $this->source = $source;
+        $source = Exceptionist::isReadable(realpath($source));
+        $this->source = Exceptionist::isDir($source, '`' . $source . '` is not a directory');
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
