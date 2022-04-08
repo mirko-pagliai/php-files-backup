@@ -56,6 +56,7 @@ class FilesBackup
      *  - `include`: includes directories excluded from the `git_ignore` option.
      * @param string $source Source directory you want to backup
      * @param array<string, mixed> $options Options
+     * @throws \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      * @throws \Tools\Exception\FileNotExistsException
      * @throws \Tools\Exception\NotReadableException
      */

@@ -17,6 +17,7 @@ namespace FilesBackup\Test\TestCase;
 use FilesBackup\FilesBackup;
 use FilesBackup\Test\ZipperReader;
 use FilesBackup\TestSuite\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Tools\TestSuite\EventAssertTrait;
 use ZipArchive;
 
@@ -36,6 +37,16 @@ class FilesBackupTest extends TestCase
         $file = tempnam(TMP, 'tmp') ?: '';
         $this->expectExceptionMessage('`' . $file . '` is not a directory');
         new FilesBackup($file);
+    }
+
+    /**
+     * Test for `__construct()` method, with a bad option
+     * @test
+     */
+    public function testConstructorBadOption(): void
+    {
+        $this->expectException(InvalidOptionsException::class);
+        new FilesBackup(APP, ['git_ignore' => 'string']);
     }
 
     /**
