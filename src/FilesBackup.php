@@ -161,7 +161,7 @@ class FilesBackup
         $Finder = $this->getFinder($this->source);
 
         if (isset($this->options['exclude'])) {
-            $Finder->exclude($this->options['exclude']);
+            $Finder->exclude(str_replace('\\', '/', $this->options['exclude']));
         }
         if ($this->options['git_ignore']) {
             $Finder->ignoreVCSIgnored(true);

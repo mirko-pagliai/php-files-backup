@@ -118,14 +118,14 @@ class FilesBackupTest extends TestCase
         $this->assertContains(APP . 'logs' . DS . 'error.log', $result);
         $this->assertContains(APP . 'vendor' . DS . 'vendor.php', $result);
 
-        $FilesBackup = new FilesBackup(APP, ['exclude' => 'subDir/subSubDir']);
+        $FilesBackup = new FilesBackup(APP, ['exclude' => 'subDir' . DS . 'subSubDir']);
         $result = $FilesBackup->getAllFiles();
         $this->assertCount($countExpectedFiles - 1, $result);
         $this->assertNotContains(APP . 'logs' . DS . 'error.log', $result);
         $this->assertNotContains(APP . 'vendor' . DS . 'vendor.php', $result);
         $this->assertNotContains(APP . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile', $result);
 
-        $FilesBackup = new FilesBackup(APP, ['exclude' => ['subDir/subSubDir', 'subDir/anotherSubDir']]);
+        $FilesBackup = new FilesBackup(APP, ['exclude' => ['subDir' . DS . 'subSubDir', 'subDir' . DS . 'anotherSubDir']]);
         $result = $FilesBackup->getAllFiles();
         $this->assertCount($countExpectedFiles - 2, $result);
         $this->assertNotContains(APP . 'logs' . DS . 'error.log', $result);
