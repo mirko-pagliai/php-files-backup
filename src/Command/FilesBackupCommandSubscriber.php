@@ -60,7 +60,9 @@ class FilesBackupCommandSubscriber implements EventSubscriberInterface
      */
     public function onFileAdded(Event $event): void
     {
-        $this->output->writeln('Added file: `' . $event->getArg(0) . '`');
+        if ($this->output->isVerbose()) {
+            $this->output->writeln('Added file: `' . $event->getArg(0) . '`');
+        }
     }
 
     /**

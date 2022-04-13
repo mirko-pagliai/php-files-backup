@@ -51,8 +51,7 @@ class FilesBackupCommand extends Command
             ->addOption('source', 's', InputOption::VALUE_REQUIRED, 'Source directory', defined('APP') ? APP : (defined('ROOT') ? ROOT : getcwd()))
             ->addOption('exclude', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Excludes directories from matching. Directories must be relative')
             ->addOption('no-git-ignore', null, InputOption::VALUE_NONE, 'Does not ignore files and directories specified in the `.gitignore` file')
-            ->addOption('include', 'i', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'includes directories excluded by the `.gitignore` file')
-            ->addOption('debug', 'd', InputOption::VALUE_NONE, 'Enables debug');
+            ->addOption('include', 'i', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'includes directories excluded by the `.gitignore` file');
     }
 
     /**
@@ -105,7 +104,7 @@ class FilesBackupCommand extends Command
             $fileAddedCount = count($EventDispatcher->getEventList()->extract('FilesBackup.fileAdded'));
             $output->writeln('<info>File added: ' . $fileAddedCount . '</info>');
         } catch (Exception $e) {
-            if ($input->getOption('debug')) {
+            if ($output->isDebug()) {
                 throw $e;
             }
             $output->writeln('<error>Error: ' . lcfirst($e->getMessage()) . '</error>');
