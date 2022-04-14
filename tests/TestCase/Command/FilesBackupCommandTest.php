@@ -16,8 +16,8 @@ namespace FilesBackup\Test\TestCase\Command;
 
 use FilesBackup\Command\FilesBackupCommand;
 use FilesBackup\TestSuite\TestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Output\OutputInterface;
+use Tools\TestSuite\Console\CommandTester;
 
 /**
  * FilesBackupCommandTest class
@@ -43,71 +43,71 @@ class FilesBackupCommandTest extends TestCase
         $target = TMP . 'tmp_' . mt_rand() . '.zip';
 
         $commandTester = $this->getCommandTester();
-        $commandTester->execute(compact('target'));
+        $commandTester->execute(compact('target'), ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Source: `' . APP . '`', $output);
-        $this->assertStringContainsString('Target: `' . $target . '`', $output);
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringContainsString('Opened zip file: `' . $target . '`', $output);
+        $commandTester->assertOutputContains('Source: `' . APP . '`');
+        $commandTester->assertOutputContains('Target: `' . $target . '`');
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will be automatically ignored');
+        $commandTester->assertOutputContains('Opened zip file: `' . $target . '`');
         foreach ($expectedFiles as $filename) {
-            $this->assertStringContainsString('Added file: `' . $filename . '`', $output);
+            $commandTester->assertOutputContains('Added file: `' . $filename . '`');
         }
-        $this->assertStringContainsString('Closed zip file: `' . $target . '`', $output);
-        $this->assertStringContainsString('Backup exported successfully to: `' . $target . '`', $output);
+        $commandTester->assertOutputContains('Closed zip file: `' . $target . '`');
+        $commandTester->assertOutputContains('Backup exported successfully to: `' . $target . '`');
+        $commandTester->assertOutputContains('File added: ' . (string)(count($expectedFiles) + 1));
 
         @unlink($target);
 
         //With `--no-git-ignore` option
-        $commandTester->execute(compact('target') + ['--no-git-ignore' => true]);
+        $commandTester->execute(compact('target') + ['--no-git-ignore' => true], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will not be ignored', $output);
-        $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
-        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will not be ignored');
+        $commandTester->assertOutputContains('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`');
+        $commandTester->assertOutputContains('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`');
+        $commandTester->assertOutputContains('File added: ' . (string)(count($expectedFiles) + 3));
 
         @unlink($target);
 
         //With `--exclude` option
-        $commandTester->execute(compact('target') + ['--exclude' => 'subDir' . DS . 'subSubDir']);
+        $commandTester->execute(compact('target') + ['--exclude' => 'subDir' . DS . 'subSubDir'], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`', $output);
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
+        $commandTester->assertOutputContains('Excluded directories: `subDir' . DS . 'subSubDir`');
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will be automatically ignored');
+        $commandTester->assertOutputNotContains('Added file: `TestApp' . DS . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`');
+        $commandTester->assertOutputContains('File added: ' . (string)count($expectedFiles));
 
         @unlink($target);
 
         //With `--exclude` option as array
-        $commandTester->execute(compact('target') + ['--exclude' => ['subDir' . DS . 'subSubDir', 'subDir' . DS . 'anotherSubDir']]);
+        $commandTester->execute(compact('target') + ['--exclude' => ['subDir' . DS . 'subSubDir', 'subDir' . DS . 'anotherSubDir']], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Excluded directories: `subDir' . DS . 'subSubDir`, `subDir' . DS . 'anotherSubDir`', $output);
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`', $output);
-        $this->assertStringNotContainsString('Added file: `subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`', $output);
+        $commandTester->assertOutputContains('Excluded directories: `subDir' . DS . 'subSubDir`, `subDir' . DS . 'anotherSubDir`');
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will be automatically ignored');
+        $commandTester->assertOutputNotContains('Added file: `TestApp' . DS . 'subDir' . DS . 'subSubDir' . DS . 'subSubDirFile`');
+        $commandTester->assertOutputNotContains('Added file: `TestApp' . DS . 'subDir' . DS . 'anotherSubDir' . DS . 'anotherSubDirFile`');
+        $commandTester->assertOutputContains('File added: ' . (string)(count($expectedFiles) - 1));
 
         @unlink($target);
 
         //With `--include` option
-        $commandTester->execute(compact('target') + ['--include' => 'vendor']);
+        $commandTester->execute(compact('target') + ['--include' => 'vendor'], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringContainsString('Included directories: `vendor`', $output);
-        $this->assertStringNotContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
-        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will be automatically ignored');
+        $commandTester->assertOutputContains('Included directories: `vendor`');
+        $commandTester->assertOutputNotContains('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`');
+        $commandTester->assertOutputContains('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`');
+        $commandTester->assertOutputContains('File added: ' . (string)(count($expectedFiles) + 2));
 
         @unlink($target);
 
         //With `--include` option as array
-        $commandTester->execute(compact('target') + ['--include' => ['logs', 'vendor']]);
+        $commandTester->execute(compact('target') + ['--include' => ['logs', 'vendor']], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]);
         $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('The files and directories specified in the `.git_ignore` file will be automatically ignored', $output);
-        $this->assertStringContainsString('Included directories: `logs`, `vendor`', $output);
-        $this->assertStringContainsString('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`', $output);
-        $this->assertStringContainsString('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`', $output);
+        $commandTester->assertOutputContains('The files and directories specified in the `.git_ignore` file will be automatically ignored');
+        $commandTester->assertOutputContains('Included directories: `logs`, `vendor`');
+        $commandTester->assertOutputContains('Added file: `TestApp' . DS . 'logs' . DS . 'error.log`');
+        $commandTester->assertOutputContains('Added file: `TestApp' . DS . 'vendor' . DS . 'vendor.php`');
+        $commandTester->assertOutputContains('File added: ' . (string)(count($expectedFiles) + 3));
     }
 
     /**
@@ -120,9 +120,11 @@ class FilesBackupCommandTest extends TestCase
 
         $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
-        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+        $commandTester->assertCommandIsFailure();
+        $commandTester->assertOutputContains('Error: file or directory `' . dirname($target) . '` does not exist');
 
-        $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Error: file or directory `' . dirname($target) . '` does not exist', $output);
+        //With `--debug` option
+        $this->expectExceptionMessage('File or directory `' . dirname($target) . '` does not exist');
+        $commandTester->execute(compact('target'), ['verbosity' => OutputInterface::VERBOSITY_DEBUG]);
     }
 }

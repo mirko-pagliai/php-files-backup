@@ -56,14 +56,14 @@ class FilesBackup
      *  - `include`: includes directories excluded from the `git_ignore` option.
      * @param string $source Source directory you want to backup
      * @param array<string, mixed> $options Options
+     * @throws \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      * @throws \Tools\Exception\FileNotExistsException
      * @throws \Tools\Exception\NotReadableException
      */
     public function __construct(string $source, array $options = [])
     {
-        Exceptionist::isReadable($source);
-        Exceptionist::isDir($source, '`' . $source . '` is not a directory');
-        $this->source = $source;
+        $source = Exceptionist::isReadable(realpath($source) ?: '');
+        $this->source = Exceptionist::isDir($source, '`' . $source . '` is not a directory');
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -161,7 +161,7 @@ class FilesBackup
         $Finder = $this->getFinder($this->source);
 
         if (isset($this->options['exclude'])) {
-            $Finder->exclude($this->options['exclude']);
+            $Finder->exclude(str_replace('\\', '/', $this->options['exclude']));
         }
         if ($this->options['git_ignore']) {
             $Finder->ignoreVCSIgnored(true);

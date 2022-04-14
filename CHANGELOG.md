@@ -1,4 +1,9 @@
 ## 1.0 branch
+### 1.0.2-beta3
+* command writes number of added files;
+* added `--debug` options for `FilesBackupCommand`;
+* added tests for PHP 8.1.
+
 ### 1.0.1-beta2
 * added `include` option for `FilesBackup` instances and `--include` option for
     `FilesBackupCommand`;
