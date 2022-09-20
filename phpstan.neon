@@ -13,5 +13,5 @@ parameters:
     checkMissingIterableValueType: false
     treatPhpDocTypesAsCertain: false
 
-    excludes_analyse:
+    excludePaths:
         -  tests/test_app/
