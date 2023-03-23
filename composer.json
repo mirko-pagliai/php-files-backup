@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^4.4",
-        "phpunit/phpunit": "^8.5.14|^9.0",
+        "phpunit/phpunit": "^8.5.14 || ^9.3",
         "phpstan/phpstan": "^1.7",
         "psalm/phar": "^4.24"
     },

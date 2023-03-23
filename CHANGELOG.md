@@ -1,6 +1,7 @@
 ## 1.0 branch
 ### 1.0.3
 * updated for php-tools 1.7.1;
+* many, small improvements proposed by phpstorm;
 * requires at least PHP 7.4.
 
 ### 1.0.2-beta3

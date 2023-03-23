@@ -19,8 +19,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 use FilesBackup\Command\FilesBackupCommand;
 use Symfony\Component\Console\Application;
 
-$command = new FilesBackupCommand();
-$application = new Application();
-$application->add($command);
-$application->setDefaultCommand($command->getName());
-$application->run();
+$Command = new FilesBackupCommand();
+$Application = new Application();
+$Application->add($Command);
+$Application->setDefaultCommand($Command->getName() ?: '');
+/** @noinspection PhpUnhandledExceptionInspection */
+$Application->run();

@@ -26,7 +26,7 @@ class FilesBackupCommandSubscriber implements EventSubscriberInterface
     /**
      * @var \Symfony\Component\Console\Output\OutputInterface
      */
-    protected $output;
+    protected OutputInterface $output;
 
     /**
      * Construct
@@ -57,6 +57,7 @@ class FilesBackupCommandSubscriber implements EventSubscriberInterface
      * This event is triggered when a file is added to the backup.
      * @param \Tools\Event\Event $event Event instance
      * @return void
+     * @throws \Tools\Exception\KeyNotExistsException
      */
     public function onFileAdded(Event $event): void
     {
@@ -71,6 +72,7 @@ class FilesBackupCommandSubscriber implements EventSubscriberInterface
      * This event is triggered when the zip file is closed.
      * @param \Tools\Event\Event $event Event instance
      * @return void
+     * @throws \Tools\Exception\KeyNotExistsException
      */
     public function onZipClosed(Event $event): void
     {
@@ -83,6 +85,7 @@ class FilesBackupCommandSubscriber implements EventSubscriberInterface
      * This event is triggered when the zip file is opened.
      * @param \Tools\Event\Event $event Event instance
      * @return void
+     * @throws \Tools\Exception\KeyNotExistsException
      */
     public function onZipOpened(Event $event): void
     {

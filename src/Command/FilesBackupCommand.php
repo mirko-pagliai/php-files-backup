@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace FilesBackup\Command;
 
 use Exception;
-use FilesBackup\Command\FilesBackupCommandSubscriber;
 use FilesBackup\FilesBackup;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -59,6 +58,7 @@ class FilesBackupCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface $input InputInterface
      * @param \Symfony\Component\Console\Output\OutputInterface $output OutputInterface
      * @return int
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

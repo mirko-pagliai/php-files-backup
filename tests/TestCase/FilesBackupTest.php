@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 declare(strict_types=1);
 
 /**
@@ -31,6 +32,7 @@ class FilesBackupTest extends TestCase
     /**
      * Test for `__construct()` method, with a no directory source
      * @test
+     * @uses \FilesBackup\FilesBackup::__construct()
      */
     public function testConstructorNoDirectorySource(): void
     {
@@ -42,6 +44,7 @@ class FilesBackupTest extends TestCase
     /**
      * Test for `__construct()` method, with a bad option
      * @test
+     * @uses \FilesBackup\FilesBackup::__construct()
      */
     public function testConstructorBadOption(): void
     {
@@ -50,8 +53,8 @@ class FilesBackupTest extends TestCase
     }
 
     /**
-     * Test for `create()` method
      * @test
+     * @uses \FilesBackup\FilesBackup::create()
      */
     public function testCreate(): void
     {
@@ -74,35 +77,28 @@ class FilesBackupTest extends TestCase
 
         $this->expectExceptionMessageMatches('/^File `[\/\w\-\.\:\~\\\_]+` already exists$/');
         $FilesBackup->create($target);
-    }
 
-    /**
-     * Test for `create()` method, with a `ZipArchive` failure
-     * @test
-     */
-    public function testCreateOnZipArchiveFailure(): void
-    {
-        $target = TMP . 'tmp_' . mt_rand() . '.zip';
-
-        $ZipArchive = $this->getMockBuilder(ZipArchive::class)
-            ->setMethods(['open'])
-            ->getMock();
-        $ZipArchive->method('open')->willReturn(false);
-
+        /**
+         * With a `ZipArchive` failure
+         */
         $FilesBackup = $this->getMockBuilder(FilesBackup::class)
-            ->setMethods(['getZipArchive'])
+            ->onlyMethods(['getZipArchive'])
             ->setConstructorArgs([APP])
             ->getMock();
+        $FilesBackup->method('getZipArchive')->willReturnCallback(function (): ZipArchive {
+            $ZipArchive = $this->createPartialMock(ZipArchive::class, ['open']);
+            $ZipArchive->method('open')->willReturn(false);
 
-        $FilesBackup->method('getZipArchive')->willReturn($ZipArchive);
-
+            return $ZipArchive;
+        });
+        $target = TMP . 'tmp_' . mt_rand() . '.zip';
         $this->expectExceptionMessage('Unable to create `' . $target . '`');
         $FilesBackup->create($target);
     }
 
     /**
-     * Test for `getAllFiles()` method
      * @test
+     * @uses \FilesBackup\FilesBackup::getAllFiles()
      */
     public function testGetAllFiles(): void
     {

@@ -24,7 +24,7 @@ if (!defined('ROOT')) {
 require ROOT . 'vendor/autoload.php';
 require ROOT . 'config/bootstrap.php';
 
-const TESTS =  ROOT . 'tests' . DS;
+const TESTS = ROOT . 'tests' . DS;
 const APP = TESTS . 'test_app' . DS . 'TestApp' . DS;
 define('TMP', sys_get_temp_dir() . DS . 'php-files-backup' . DS);
 
