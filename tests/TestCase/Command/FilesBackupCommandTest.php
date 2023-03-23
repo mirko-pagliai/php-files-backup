@@ -34,7 +34,7 @@ class FilesBackupCommandTest extends TestCase
     }
 
     /**
-     * Test for `execute()` method
+     * @uses \FilesBackup\Command\FilesBackupCommand::execute()
      * @test
      */
     public function testExecute(): void
@@ -113,6 +113,7 @@ class FilesBackupCommandTest extends TestCase
     /**
      * Test for `execute()` method on failure
      * @test
+     * @uses \FilesBackup\Command\FilesBackupCommand::execute()
      */
     public function testExecuteOnFailure(): void
     {
@@ -121,10 +122,10 @@ class FilesBackupCommandTest extends TestCase
         $commandTester = $this->getCommandTester();
         $commandTester->execute(compact('target'));
         $commandTester->assertCommandIsFailure();
-        $commandTester->assertOutputContains('Error: file or directory `' . dirname($target) . '` does not exist');
+        $commandTester->assertOutputContains('Error: file or directory `' . dirname($target) . '` is not writable');
 
         //With `--debug` option
-        $this->expectExceptionMessage('File or directory `' . dirname($target) . '` does not exist');
+        $this->expectExceptionMessage('File or directory `' . dirname($target) . '` is not writable');
         $commandTester->execute(compact('target'), ['verbosity' => OutputInterface::VERBOSITY_DEBUG]);
     }
 }
