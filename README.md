@@ -9,9 +9,9 @@
 *php-files-backup* is a PHP library for creating files backups.
 
 Did you like this plugin? Its development requires a lot of time for me.
-Please consider the possibility of making [a donation](//paypal.me/mirkopagliai): even a coffee is enough! Thank you.
+Please consider the possibility of making [a donation](https://paypal.me/mirkopagliai): even a coffee is enough! Thank you.
 
-[![Make a donation](https://www.paypalobjects.com/webstatic/mktg/logo-center/logo_paypal_carte.jpg)](//paypal.me/mirkopagliai)
+[![Make a donation](https://www.paypalobjects.com/webstatic/mktg/logo-center/logo_paypal_carte.jpg)](https://paypal.me/mirkopagliai)
 
 ## Installation
 You can install the plugin via composer:

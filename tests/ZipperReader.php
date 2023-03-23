@@ -28,7 +28,7 @@ class ZipperReader
     /**
      * @var \ZipArchive
      */
-    protected $ZipArchive;
+    protected ZipArchive $ZipArchive;
 
     /**
      * Constructor

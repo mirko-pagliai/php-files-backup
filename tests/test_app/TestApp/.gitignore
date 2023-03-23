@@ -13,9 +13,6 @@ debug.log
 error.log
 .phpunit.result.cache
 
-# This is a duplicate!
-.phpunit.result.cache
-
 # OS generated files #
 ######################
 .DS_Store
