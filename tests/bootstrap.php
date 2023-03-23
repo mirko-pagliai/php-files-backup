@@ -24,8 +24,8 @@ if (!defined('ROOT')) {
 require ROOT . 'vendor/autoload.php';
 require ROOT . 'config/bootstrap.php';
 
-define('TESTS', ROOT . 'tests' . DS);
-define('APP', TESTS . 'test_app' . DS . 'TestApp' . DS);
+const TESTS =  ROOT . 'tests' . DS;
+const APP = TESTS . 'test_app' . DS . 'TestApp' . DS;
 define('TMP', sys_get_temp_dir() . DS . 'php-files-backup' . DS);
 
 @mkdir(TMP, 0777, true);
